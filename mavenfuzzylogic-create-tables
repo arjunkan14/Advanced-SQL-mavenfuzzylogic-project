@@ -1,0 +1,106 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+
+SET @@sql_mode='no_engine_substitution';
+
+SET global time_zone = '-5:00'; 
+
+SET SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+  
+DROP SCHEMA IF EXISTS mavenfuzzyfactory; -- this will cause an errror if DB doesn't exist. Dont worry
+CREATE SCHEMA mavenfuzzyfactory;
+USE mavenfuzzyfactory;
+
+--
+-- Creating an empty shell for the table 'website_sessions'. We will populate it later. 
+--
+
+CREATE TABLE website_sessions (
+  website_session_id BIGINT,
+  created_at TIMESTAMP,
+  user_id BIGINT,
+  is_repeat_session SMALLINT, 
+  utm_source VARCHAR(12), 
+  utm_campaign VARCHAR(20),
+  utm_content VARCHAR(15), 
+  device_type VARCHAR(15), 
+  http_referer VARCHAR(30),
+  PRIMARY KEY (website_session_id),
+  KEY website_sessions_user_id (user_id)
+)ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+
+--
+-- Creating an empty shell for the table 'website_pageviews'. We will populate it later. 
+--
+
+CREATE TABLE website_pageviews (
+  website_pageview_id BIGINT,
+  created_at TIMESTAMP,
+  website_session_id BIGINT,
+  pageview_url VARCHAR(50),
+  PRIMARY KEY (website_pageview_id),
+  KEY website_pageviews_website_session_id (website_session_id)
+)ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+
+--
+-- Creating an empty shell for the table 'products'. We will populate it later. 
+--
+
+CREATE TABLE products (
+  product_id BIGINT,
+  created_at TIMESTAMP,
+  product_name VARCHAR(50),
+  PRIMARY KEY (product_id)
+)ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+--
+-- Creating an empty shell for the table 'orders'. We will populate it later. 
+--
+
+CREATE TABLE orders (
+  order_id BIGINT,
+  created_at TIMESTAMP,
+  website_session_id BIGINT,
+  user_id BIGINT,
+  primary_product_id SMALLINT,
+  items_purchased SMALLINT,
+  price_usd DECIMAL(6,2),
+  cogs_usd DECIMAL(6,2),
+  PRIMARY KEY (order_id),
+  KEY orders_website_session_id (website_session_id)
+)ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+
+--
+-- Creating an empty shell for the table 'order_items'. We will populate it later. 
+--
+
+CREATE TABLE order_items (
+  order_item_id BIGINT,
+  created_at TIMESTAMP,
+  order_id BIGINT,
+  product_id SMALLINT,
+  is_primary_item SMALLINT,
+  price_usd DECIMAL(6,2),
+  cogs_usd DECIMAL(6,2),
+  PRIMARY KEY (order_item_id),
+  KEY order_items_order_id (order_id)
+)ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+
+--
+-- Creating an empty shell for the table 'order_item_refunds'. We will populate it later. 
+--
+
+CREATE TABLE order_item_refunds (
+  order_item_refund_id BIGINT,
+  created_at TIMESTAMP,
+  order_item_id BIGINT,
+  order_id BIGINT,
+  refund_amount_usd DECIMAL(6,2),
+  PRIMARY KEY (order_item_refund_id),
+  KEY order_items_order_id (order_id),
+  KEY order_items_order_item_id (order_item_id)
+)ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
